@@ -1,0 +1,59 @@
+/include/ "system-conf.dtsi"
+
+/ {
+
+	amba_pl: amba_pl {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		axi_gpio_0: gpio@41200000 {
+			compatible = "xlnx,axi-gpio-2.0", "xlnx,xps-gpio-1.00.a";
+			reg = <0x41200000 0x10000>;
+
+			clock-names = "s_axi_aclk";
+			clocks = <&clkc 15>;
+
+			gpio-controller;
+			#gpio-cells = <2>;
+
+			gpio-line-names = "mig_reset";
+
+			xlnx,all-inputs = <0x0>;
+			xlnx,all-inputs-2 = <0x0>;
+
+			xlnx,all-outputs = <0x1>;
+			xlnx,all-outputs-2 = <0x0>;
+
+			/*
+			 * MIG sys_rst is active-high:
+			 * default 1 keeps MIG in reset.
+			 */
+			xlnx,dout-default = <0x00000001>;
+			xlnx,dout-default-2 = <0x00000000>;
+
+			xlnx,gpio-width = <0x1>;
+			xlnx,gpio2-width = <0x20>;
+
+			xlnx,interrupt-present = <0x0>;
+			xlnx,is-dual = <0x0>;
+
+			/*
+			 * bit0 must be output, not tristate.
+			 */
+			xlnx,tri-default = <0x00000000>;
+			xlnx,tri-default-2 = <0xFFFFFFFF>;
+		};
+
+		/*
+		 * user.org:ip:led_count_ip:1.0
+		 * Vivado address assignment: 0x43c30000, 64 KiB.
+		 */
+		led_count_0: led-count@43c30000 {
+			compatible = "xlnx,led-count-ip-1.0";
+			reg = <0x43c30000 0x00010000>;
+			status = "okay";
+		};
+	};
+};
